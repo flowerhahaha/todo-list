@@ -1,9 +1,15 @@
+// set server
 const express = require('express')
-const mongoose = require('mongoose')
-
 const app = express()
+
+// set template engine
+const exphbs = require('express-handlebars')
+app.engine('hbs', exphbs({defaultLayout: 'main', extname: '.hbs'}))
+app.set('view engine', 'hbs')
+
+// set database
+const mongoose = require('mongoose')
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-console.log(process.env.MONGODB_URI)
 
 // 取得資料庫連線狀態
 const db = mongoose.connection
@@ -17,9 +23,10 @@ db.once('open', () => {
 })
 
 app.get('/', (req, res) => {
-  res.send('Hi')
+  res.render('index')
 })
 
+// set router
 app.listen(3000, () => {
   console.log('The server is running')
 })
