@@ -4,12 +4,14 @@ const app = express()
 
 // set template engine
 const exphbs = require('express-handlebars')
+const { TopologyDescription } = require('mongodb')
 app.engine('hbs', exphbs({defaultLayout: 'main', extname: '.hbs'}))
 app.set('view engine', 'hbs')
 
 // set database
 const mongoose = require('mongoose')
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+const Todo = require('./models/todo')
 
 // 取得資料庫連線狀態
 const db = mongoose.connection
@@ -23,7 +25,10 @@ db.once('open', () => {
 })
 
 app.get('/', (req, res) => {
-  res.render('index')
+  Todo.find()
+    .lean()
+    .then(todos => res.render('index', { todos }))
+    .catch(error => console.error(error))
 })
 
 // set router
