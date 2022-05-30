@@ -12,13 +12,12 @@ const { TopologyDescription } = require('mongodb')
 const mongoose = require('mongoose')
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 const Todo = require('./models/todo')
-// 取得資料庫連線狀態
+
+// set db connection status
 const db = mongoose.connection
-// 連線異常
 db.on('error', () => {
   console.log('mongodb error!')
 })
-// 連線成功
 db.once('open', () => {
   console.log('mongodb connected!')
 })
@@ -55,6 +54,40 @@ app.get('/todos/:id', (req, res) => {
     .then(todo => res.render('detail', {todo}))
     .catch(error => console.log(error))
 })
+
+// set router: edit todo detail
+app.get('/todos/:id/edit', (req, res) => {
+  const {id} = req.params
+  Todo.findById(id)
+    .lean()
+    .then(todo => res.render('edit', {todo}))
+    .catch(error => console.log(error))
+})
+
+// set router: update edited todo detail
+app.post('/todos/:id/edit', (req, res) => {
+  const {id} = req.params
+  const name = req.body.name
+  Todo.findById(id)
+    .then(todo => {
+      todo.name = name
+      todo.save()
+      res.redirect(`/todos/${id}`)
+    })
+    .catch(error => console.log(error))
+})
+
+// app.post('/todos/:id/edit', (req, res) => {
+//   const id = req.params.id
+//   const name = req.body.name
+//   return Todo.findById(id)
+//     .then(todo => {
+//       todo.name = name
+//       return todo.save()
+//     })
+//     .then(()=> res.redirect(`/todos/${id}`))
+//     .catch(error => console.log(error))
+// })
 
 // start the server at port 3000
 app.listen(3000, () => {
