@@ -47,6 +47,15 @@ app.post('/todos', (req, res) => {
     .catch(error => console.log(error))
 })
 
+// set router: get detail page
+app.get('/todos/:id', (req, res) => {
+  const {id} = req.params
+  Todo.findById(id)
+    .lean()
+    .then(todo => res.render('detail', {todo}))
+    .catch(error => console.log(error))
+})
+
 // start the server at port 3000
 app.listen(3000, () => {
   console.log('The server is running')
