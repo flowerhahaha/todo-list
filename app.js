@@ -4,7 +4,7 @@ const app = express()
 
 // set template engine
 const exphbs = require('express-handlebars')
-app.engine('hbs', exphbs({defaultLayout: 'main', extname: '.hbs'}))
+app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }))
 app.set('view engine', 'hbs')
 
 // set database
@@ -41,7 +41,7 @@ app.get('/todos/new', (req, res) => {
 // set router: post a new todo
 app.post('/todos', (req, res) => {
   const name = req.body.name
-  Todo.create({'name': req.body.name.toString()})
+  Todo.create({ name })
     .then(() => res.redirect('/'))
     .catch(error => console.log(error))
 })
@@ -51,7 +51,7 @@ app.get('/todos/:id', (req, res) => {
   const {id} = req.params
   Todo.findById(id)
     .lean()
-    .then(todo => res.render('detail', {todo}))
+    .then(todo => res.render('detail', { todo }))
     .catch(error => console.log(error))
 })
 
@@ -60,17 +60,18 @@ app.get('/todos/:id/edit', (req, res) => {
   const {id} = req.params
   Todo.findById(id)
     .lean()
-    .then(todo => res.render('edit', {todo}))
+    .then(todo => res.render('edit', { todo }))
     .catch(error => console.log(error))
 })
 
 // set router: update edited todo detail
 app.post('/todos/:id/edit', (req, res) => {
   const {id} = req.params
-  const name = req.body.name
+  const {name, isDone} = req.body
   Todo.findById(id)
     .then(todo => {
       todo.name = name
+      todo.isDone = isDone === 'on' // 'on' or undefined
       todo.save()
       res.redirect(`/todos/${id}`)
     })
