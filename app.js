@@ -1,20 +1,21 @@
-// set server
+// add required packages
 const express = require('express')
+const exphbs = require('express-handlebars')
+// const { TopologyDescription } = require('mongodb')
+const mongoose = require('mongoose')
+const Todo = require('./models/todo')
+const methodOverride = require('method-override')
+
+// set constant
 const app = express()
+const db = mongoose.connection
 
 // set template engine
-const exphbs = require('express-handlebars')
 app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }))
 app.set('view engine', 'hbs')
 
-// set database
-const { TopologyDescription } = require('mongodb')
-const mongoose = require('mongoose')
+// set db connection
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-const Todo = require('./models/todo')
-
-// set db connection status
-const db = mongoose.connection
 db.on('error', () => {
   console.log('mongodb error!')
 })
@@ -22,8 +23,11 @@ db.once('open', () => {
   console.log('mongodb connected!')
 })
 
-// set body-parser 
+// set middleware: body-parser 
 app.use(express.urlencoded({ extended: true }))
+
+// set middleware: method-override
+app.use(methodOverride('_method'))
 
 // set router: get homepage
 app.get('/', (req, res) => {
@@ -56,7 +60,7 @@ app.get('/todos/:id', (req, res) => {
     .catch(error => console.log(error))
 })
 
-// set router: edit todo detail
+// set router: get edit todo page
 app.get('/todos/:id/edit', (req, res) => {
   const {id} = req.params
   Todo.findById(id)
@@ -65,8 +69,8 @@ app.get('/todos/:id/edit', (req, res) => {
     .catch(error => console.log(error))
 })
 
-// set router: update edited todo detail
-app.post('/todos/:id/edit', (req, res) => {
+// set router: put edited todo detail
+app.put('/todos/:id', (req, res) => {
   const {id} = req.params
   const {name, isDone} = req.body
   Todo.findById(id)
@@ -80,7 +84,7 @@ app.post('/todos/:id/edit', (req, res) => {
 })
 
 // set router: delete todo
-app.post('/todos/:id/delete', (req, res) => {
+app.delete('/todos/:id', (req, res) => {
   const {id} = req.params
   Todo.findById(id)
     .then(todo => {
