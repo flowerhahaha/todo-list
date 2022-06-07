@@ -1,6 +1,9 @@
 <form action="/todos/{{ todo._id }}?_method=PUT" method="POST">
-  <input type="checkbox" name="isDone" {{#if todo.isDone}} checked {{/if}}>
-  <input type="text" name="name" value={{ todo.name }}>
-  <button type="submit">Save</button>
-  <a href="/">back</a>
+  <div class="input-group mb-3">
+    <div class="input-group-text">
+      <input class="form-check-input mt-0" type="checkbox" name="isDone" {{#if todo.isDone}} checked {{/if}} aria-label="Checkbox for following text input">
+    </div>
+    <input type="text" class="form-control" value= {{ todo.name }} aria-label="Text input with checkbox">
+    <button class="btn btn-success" type="submit">Save</button>
+  </div>
 </form>
