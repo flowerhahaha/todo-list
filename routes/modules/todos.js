@@ -3,12 +3,12 @@ const router = express.Router()
 const Todo = require('../../models/todo')
 
 // set router: get new page
-router.get('/todos/new', (req, res) => {
+router.get('/new', (req, res) => {
   res.render('new')
 })
 
 // set router: post a new todo
-router.post('/todos', (req, res) => {
+router.post('/', (req, res) => {
   const name = req.body.name
   Todo.create({ name })
     .then(() => res.redirect('/'))
@@ -16,7 +16,7 @@ router.post('/todos', (req, res) => {
 })
 
 // set router: get detail page
-router.get('/todos/:id', (req, res) => {
+router.get('/:id', (req, res) => {
   const {id} = req.params
   Todo.findById(id)
     .lean()
@@ -25,7 +25,7 @@ router.get('/todos/:id', (req, res) => {
 })
 
 // set router: get edit todo page
-router.get('/todos/:id/edit', (req, res) => {
+router.get('/:id/edit', (req, res) => {
   const {id} = req.params
   Todo.findById(id)
     .lean()
@@ -34,7 +34,7 @@ router.get('/todos/:id/edit', (req, res) => {
 })
 
 // set router: put edited todo detail
-router.put('/todos/:id', (req, res) => {
+router.put('/:id', (req, res) => {
   const {id} = req.params
   const {name, isDone} = req.body
   Todo.findById(id)
@@ -42,13 +42,13 @@ router.put('/todos/:id', (req, res) => {
       todo.name = name
       todo.isDone = isDone === 'on' // 'on' or undefined
       todo.save()
-      res.redirect(`/todos/${id}`)
+      res.redirect(`/${id}`)
     })
     .catch(error => console.log(error))
 })
 
 // set router: delete todo
-router.delete('/todos/:id', (req, res) => {
+router.delete('/:id', (req, res) => {
   const {id} = req.params
   Todo.findById(id)
     .then(todo => {
@@ -61,4 +61,4 @@ router.delete('/todos/:id', (req, res) => {
 // export router function object
 module.exports = router
 
-console.log(router)
+// console.log(router)
