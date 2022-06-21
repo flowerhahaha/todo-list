@@ -35,15 +35,15 @@ router.get('/:id/edit', (req, res) => {
 
 // set router: put edited todo detail
 router.put('/:id', (req, res) => {
-  const {id} = req.params
-  const {name, isDone} = req.body
+  const { id } = req.params
+  const { name, isDone } = req.body
   Todo.findById(id)
     .then(todo => {
       todo.name = name
-      todo.isDone = isDone === 'on' // 'on' or undefined
-      todo.save()
-      res.redirect(`/${id}`)
+      todo.isDone = isDone === 'on'
+      return todo.save()
     })
+    .then(() => res.redirect(`/todos/${id}`))
     .catch(error => console.log(error))
 })
 
@@ -60,5 +60,3 @@ router.delete('/:id', (req, res) => {
 
 // export router function object
 module.exports = router
-
-// console.log(router)

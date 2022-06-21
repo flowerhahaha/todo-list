@@ -1,9 +1,9 @@
 <form action="/todos/{{ todo._id }}?_method=DELETE" method="POST">
   <div class="input-group mb-3">
     <div class="input-group-text">
-      <input class="form-check-input mt-0" type="checkbox" name="isDone" {{#if todo.isDone}} checked {{/if}} disabled aria-label="Checkbox for following text input">
+      <input class="form-check-input mt-0" type="checkbox" name="isDone" {{#if todo.isDone}} checked {{/if}} disabled>
     </div>
-    <input type="text" class="form-control" value= {{ todo.name }} disabled aria-label="Text input with checkbox">
+    <input type="text" class="form-control" name="name" value="{{ todo.name }}" disabled>
     <a class="btn btn-success" href="/todos/{{ todo._id }}/edit">edit</a> 
     <button class="btn btn-danger" type="submit">delete</button>
   </div>
