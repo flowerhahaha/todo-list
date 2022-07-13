@@ -15,4 +15,9 @@ router.get('/register', (req, res) => {
   res.render('register')
 })
 
+// post register information to register an account
+router.post('/register', (req, res) => {
+  
+})
+
 module.exports = router
