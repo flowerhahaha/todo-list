@@ -1,4 +1,7 @@
 // add modules
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
 const express = require('express')
 const exphbs = require('express-handlebars')
 const methodOverride = require('method-override')
@@ -6,6 +9,7 @@ const Todo = require('./models/todo')
 const routes = require('./routes')
 require('./config/mongoose')
 
+console.log(process.env.NODE_ENV)
 const app = express()
 const PORT = process.env.PORT || 3000
 
