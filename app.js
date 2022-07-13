@@ -5,11 +5,9 @@ if (process.env.NODE_ENV !== 'production') {
 const express = require('express')
 const exphbs = require('express-handlebars')
 const methodOverride = require('method-override')
-const Todo = require('./models/todo')
 const routes = require('./routes')
 require('./config/mongoose')
 
-console.log(process.env.NODE_ENV)
 const app = express()
 const PORT = process.env.PORT || 3000
 
@@ -25,6 +23,13 @@ app.use(methodOverride('_method'))
 
 // set middleware: routes
 app.use(routes)
+
+// error handling: catch error from server side
+app.use((err, req, res, next) => {
+  const errMessage = 'Sorry! Server is broken. We will fix it soon.'
+  console.log(err)
+  res.status(500).render('error', { errMessage })
+})
 
 // start the server at port 3000
 app.listen(PORT, () => {
