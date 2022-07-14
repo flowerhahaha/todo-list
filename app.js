@@ -3,17 +3,24 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
 const express = require('express')
+const session = require('express-session')
 const exphbs = require('express-handlebars')
 const methodOverride = require('method-override')
 const routes = require('./routes')
 require('./config/mongoose')
-
 const app = express()
 const PORT = process.env.PORT || 3000
 
 // set template engine
 app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }))
 app.set('view engine', 'hbs')
+
+// set middleware: session
+app.use(session({
+  secret: process.env.SESSION_KEY,
+  resave: false,
+  saveUninitialized: true
+}))
 
 // set middleware: body-parser 
 app.use(express.urlencoded({ extended: true }))
