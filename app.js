@@ -7,6 +7,7 @@ const session = require('express-session')
 const exphbs = require('express-handlebars')
 const methodOverride = require('method-override')
 const routes = require('./routes')
+const usePassport = require('./config/passport')
 require('./config/mongoose')
 const app = express()
 const PORT = process.env.PORT || 3000
@@ -28,7 +29,8 @@ app.use(express.urlencoded({ extended: true }))
 // set middleware: method-override
 app.use(methodOverride('_method'))
 
-// set middleware: routes
+// set middleware: usePassport(), routes
+usePassport(app)
 app.use(routes)
 
 // error handling: catch error from server side
