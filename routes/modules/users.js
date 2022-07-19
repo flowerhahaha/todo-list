@@ -37,4 +37,13 @@ router.post('/register', async (req, res, next) => {
   }
 })
 
+router.get('/logout', (req, res, next) => {
+  console.log(req.session)
+  req.logout(err => {
+    if (err) return next(err)
+    res.redirect('/users/login')
+    console.log(req.session)
+  })
+})
+
 module.exports = router

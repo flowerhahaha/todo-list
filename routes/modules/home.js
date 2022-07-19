@@ -4,6 +4,7 @@ const Todo = require('../../models/todo')
 
 // set router: get homepage
 router.get('/', (req, res) => {
+  console.log('callbackFn of get "/" router ', req.user, req.isAuthenticated())
   Todo.find()
     .lean()
     .sort({_id: 1}) // 1: 'asc', -1: 'desc'

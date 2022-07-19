@@ -29,7 +29,7 @@ app.use(express.urlencoded({ extended: true }))
 // set middleware: method-override
 app.use(methodOverride('_method'))
 
-// set middleware: usePassport(), routes
+// set middleware: passport initialize and authenticate, routes
 usePassport(app)
 app.use(routes)
 
