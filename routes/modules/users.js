@@ -21,12 +21,22 @@ router.get('/register', (req, res) => {
 // post register information to register an account
 router.post('/register', async (req, res, next) => {
   const { name, email, password, confirmPassword } = req.body
+  const errors = []
+  if (!name || !email || !password || !confirmPassword) {
+    errors.push({ message: 'All fields are required.' })
+  }
+  if (password !== confirmPassword) {
+    errors.push({ message: 'The password confirmation does not match' })
+  }
+  if (errors.length) {
+    return res.render('register', {errors, name, email, password})
+  }
   try {
     // check if the email already exists
     const userData = await User.exists({ email })
     if (userData) {
-      const errMsg = 'User already exists'
-      return res.render('register', {name, email, password, errMsg})
+      errors.push({ message: 'User already exists' })
+      return res.render('register', {errors, name, email, password})
     }
     // else store the user register information
     await User.create({ name, email, password })
@@ -41,6 +51,7 @@ router.get('/logout', (req, res, next) => {
   console.log(req.session)
   req.logout(err => {
     if (err) return next(err)
+    req.flash('success_msg', 'You have successfully logged out.')
     res.redirect('/users/login')
     console.log(req.session)
   })
