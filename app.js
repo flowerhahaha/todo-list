@@ -29,8 +29,15 @@ app.use(express.urlencoded({ extended: true }))
 // set middleware: method-override
 app.use(methodOverride('_method'))
 
-// set middleware: passport initialize and authenticate, routes
+// set middleware: passport initialize and authenticate
 usePassport(app)
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.isAuthenticated()
+  res.locals.user = req.user
+  next()
+})
+
+// set middleware: routes
 app.use(routes)
 
 // error handling: catch error from server side
