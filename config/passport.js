@@ -1,4 +1,5 @@
 const passport = require('passport')
+const bcrypt = require('bcryptjs')
 const LocalStrategy = require('passport-local').Strategy
 const User = require('../models/user')
 
@@ -13,19 +14,21 @@ module.exports = app => {
       usernameField: 'email',
       passReqToCallback: true 
     }, 
-    (req, email, password, done) => {
+    async (req, email, password, done) => {
       console.log('callbackFn of new LocalStrategy')
-      User.findOne({ email })
-        .then(user => {
-          if (!user) {
-            return done(null, false, req.flash('warning_msg', 'Incorrect username or password.'))
-          }
-          if (user.password !== password) {
-            return done(null, false, req.flash('warning_msg', 'Incorrect username or password.'))
-          }
-          return done(null, user)
-        })
-        .catch(err => done(err, false))
+      try {
+        const userData = await User.findOne({ email })
+        if (!userData) {
+          return done(null, false, req.flash('warning_msg', 'Incorrect username or password.'))
+        }
+        const isMatch = await bcrypt.compare(password, userData.password)
+        if (!isMatch) {
+          return done(null, false, req.flash('warning_msg', 'Incorrect username or password.'))
+        }
+        return done(null, userData)
+      } catch (err) {
+        done(err, false)
+      }
     }
   ))
 

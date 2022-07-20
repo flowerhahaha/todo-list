@@ -43,7 +43,8 @@ router.post('/register', async (req, res, next) => {
     const salt = await bcrypt.genSalt(10)
     const hash = await bcrypt.hash(password, salt)
     await User.create({ name, email, password: hash })
-    res.redirect('/')
+    req.flash('success_msg', 'Register successfully! Please login to your account')
+    res.redirect('/users/login')
   } catch(e) {
     console.log(e)
     next(e)
