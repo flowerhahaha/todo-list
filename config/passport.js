@@ -1,14 +1,14 @@
 const passport = require('passport')
 const bcrypt = require('bcryptjs')
 const LocalStrategy = require('passport-local').Strategy
+const FacebookStrategy = require('passport-facebook').Strategy
 const User = require('../models/user')
 
 module.exports = app => {
   app.use(passport.initialize())
   app.use(passport.session())
 
-  /* usernameField 預設是 username，會自動抓取 POST body 中的 username 屬性代入其後 callbackFn 的第一個參數，參數名稱可自訂，passwordField 預設則是 password
-  */
+  // login with email and password
   passport.use(new LocalStrategy(
     { 
       usernameField: 'email',
@@ -27,6 +27,37 @@ module.exports = app => {
         }
         return done(null, userData)
       } catch (err) {
+        done(err, false)
+      }
+    }
+  ))
+  
+  // login with facebook
+  passport.use(new FacebookStrategy(
+    {
+      clientID: process.env.FACEBOOK_ID,
+      clientSecret: process.env.FACEBOOK_SECRET,
+      callbackURL: process.env.FACEBOOK_CALLBACK,
+      profileFields: ['email', 'displayName']
+    }, 
+    async (accessToken, refreshToken, profile, done) => {
+      console.log('callbackFn of new FacebookStrategy')
+      const { name, email } = profile._json
+      console.log(name, email)
+      try {
+        // if the user doesn't exist, generate a random password and store the userData first
+        let userData = await User.findOne({ email })
+        console.log('user: ', userData)
+        if (!userData) {
+          const randomPassword = Math.random().toString(36).slice(-8)
+          const salt = await bcrypt.genSalt(10)
+          const hash = await bcrypt.hash(randomPassword, salt)
+          userData = await User.create({ name, email, password: hash })
+        }
+        // log in to the homepage
+        return done(null, userData)
+      } catch (err) {
+        console.log(err)
         done(err, false)
       }
     }

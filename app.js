@@ -11,7 +11,7 @@ const routes = require('./routes')
 const usePassport = require('./config/passport')
 require('./config/mongoose')
 const app = express()
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT
 
 // set template engine
 app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }))
@@ -24,22 +24,20 @@ app.use(session({
   saveUninitialized: true
 }))
 
-// set middleware: body-parser 
+// set middleware: body-parser and method-override
 app.use(express.urlencoded({ extended: true }))
-
-// set middleware: method-override
 app.use(methodOverride('_method'))
 
 // set middleware: passport initialize and authenticate
 usePassport(app)
+
+// set middleware: flash and locals
 app.use(flash())
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.isAuthenticated()
   res.locals.user = req.user
-  console.log(req.session)
   res.locals.success_msg = req.flash('success_msg')
   res.locals.warning_msg = req.flash('warning_msg')
-  console.log(req.session)
   next()
 })
 

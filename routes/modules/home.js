@@ -4,6 +4,7 @@ const Todo = require('../../models/todo')
 
 // set router: get homepage
 router.get('/', (req, res) => {
+  console.log('This is get "/" route')
   const userId = req.user._id
   Todo.find({ userId })
     .lean()

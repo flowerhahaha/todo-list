@@ -34,8 +34,8 @@ router.post('/register', async (req, res, next) => {
   }
   try {
     // check if the email already exists
-    const userData = await User.exists({ email })
-    if (userData) {
+    const isUserExisted = await User.exists({ email })
+    if (isUserExisted) {
       errors.push({ message: 'User already exists' })
       return res.render('register', {errors, name, email, password})
     }
